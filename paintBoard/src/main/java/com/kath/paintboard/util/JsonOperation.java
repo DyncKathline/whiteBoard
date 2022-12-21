@@ -105,6 +105,9 @@ public class JsonOperation {
                     shape.setWidth(Float.parseFloat(reader.nextString()));
                 } else if (field.equals("Pointlist")) {
                     shape.setPointList(changeStrToListData(reader.nextString()));
+                } else {
+                    //多余的字段需要读取值，不然会抛异常
+                    reader.nextString();
                 }
             }
             Paint newPaint = new Paint();

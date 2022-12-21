@@ -15,6 +15,7 @@ public class Constants {
 
     public static final int MSG_EXIT = 0X111;//退出信号
 
+    public static final int PLAYBACK = 3;
     public static final int CLEAR = 4;
     public static final int PNG = 5;
     public static final int SVG = 6;

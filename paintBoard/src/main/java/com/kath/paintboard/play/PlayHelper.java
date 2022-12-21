@@ -5,6 +5,11 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import com.kath.paintboard.bean.Point;
 import com.kath.paintboard.bean.Shape;
 import com.kath.paintboard.widget.PaintView;
@@ -12,14 +17,16 @@ import com.kath.paintboard.widget.PaintView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayHelper {
+public class PlayHelper implements LifecycleObserver {
 
     private final Handler mHandler;
     private final PaintView mPlayView;
     private List<Shape> mShapes;
     private final Object obj;
+    private PlayRunnable playRunnable;
 
-    public PlayHelper(PaintView playView) {
+    public PlayHelper(FragmentActivity activity, PaintView playView) {
+        activity.getLifecycle().addObserver(this);
         mPlayView = playView;
         mHandler = new Handler(Looper.getMainLooper());
         obj = new Object();
@@ -31,8 +38,15 @@ public class PlayHelper {
         //这里要清空，不然会多出一份数据，因为是重新绘制了一遍
         mPlayView.setSaveShapeList(new ArrayList<Shape>());
 
-        PlayRunnable playRunnable = new PlayRunnable();
+        playRunnable = new PlayRunnable();
         new Thread(playRunnable).start();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void stop() {
+        if(playRunnable != null) {
+            playRunnable.stop();
+        }
     }
 
     public interface PlayListener {
@@ -77,7 +91,7 @@ public class PlayHelper {
                 int nextTick = 0;
                 Shape shape = mShapes.get(index);
                 List<Point> points = shape.getPointList();
-                if (index > 0) {
+                if (index > 0) {//这里是为了两段笔画之间可能存在停留间隙，不然会画完上一个就直接画下一个了
                     Point point = points.get(0);
                     while (!mStopping && frameNeedWait(point.getTime(), getTick())) {
                         synchronized (obj) {
@@ -87,7 +101,6 @@ public class PlayHelper {
                                 e.printStackTrace();
                             }
                         }
-                        //
                     }
                 }
                 while (loop && !mStopping) {
@@ -103,7 +116,6 @@ public class PlayHelper {
                     } else {
                         mPlayView.onTouchEventV(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, point.getX(), point.getY(), 0));
                     }
-                    //
                     while (!mStopping && frameNeedWait(point.getTime() + differ, getTick())) {
                         synchronized (obj) {
                             try {
@@ -112,10 +124,8 @@ public class PlayHelper {
                                 e.printStackTrace();
                             }
                         }
-                        //
                     }
                     nextTick++;
-                    //
                     loop = (nextTick != points.size());
                 }
                 index++;
@@ -140,7 +150,11 @@ public class PlayHelper {
         }
 
         public final void stop() {
+            if(mStopping) {
+               return;
+            }
             mStopping = true;
+            mPlayView.setFingerEnable(true);
             if (playListener != null) {
                 playListener.onEnd(false);
             }

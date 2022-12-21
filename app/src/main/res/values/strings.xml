@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Palette</string>
     <string name="board">画板</string>
-    <string name="save_cur_paint_board">清空当前画板</string>
+    <string name="stop_playback">终止回放</string>
+    <string name="clear_cur_paint_board">清空当前画板</string>
     <string name="save_as_png">另存为png</string>
     <string name="save_as_svg">另存为svg</string>
     <string name="recording">回放中...</string>

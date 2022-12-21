@@ -69,6 +69,7 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
 
     Handler handlertest = new Handler();
     String filename;
+    private PlayHelper playHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
 //                    mPaintView.loadPreImage(filename);
 //                    mPaintView.redrawOnBitmap();
 
-                    PlayHelper playHelper = new PlayHelper(mPaintView);
+                    playHelper = new PlayHelper(PaintActivity.this, mPaintView);
                     playHelper.setPlayListener(new PlayHelper.PlayListener() {
                         @Override
                         public void onStart() {
@@ -396,6 +397,9 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void SaveClick(int saveKind) {
         switch (saveKind) {
+            case Constants.PLAYBACK:
+                playHelper.stop();
+                return;
             case Constants.CLEAR:
                 mPaintView.clear();
                 return;

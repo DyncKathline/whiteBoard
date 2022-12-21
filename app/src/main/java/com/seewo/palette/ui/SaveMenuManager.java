@@ -14,6 +14,7 @@ public class SaveMenuManager implements View.OnClickListener {
 
     Context mContext;
     View mView;
+    TextView StopPlaybackTv;
     TextView CurPaintClearTv;
     TextView SavePngTv;
     TextView SaveSvgTv;
@@ -26,12 +27,14 @@ public class SaveMenuManager implements View.OnClickListener {
     }
 
     private void initEvent() {
+        StopPlaybackTv.setOnClickListener(this);
         CurPaintClearTv.setOnClickListener(this);
         SaveSvgTv.setOnClickListener(this);
         SavePngTv.setOnClickListener(this);
     }
 
     private void initView() {
+        StopPlaybackTv = mView.findViewById(R.id.stop_playback);
         CurPaintClearTv = mView.findViewById(R.id.cur_paint_clear);
         SavePngTv = mView.findViewById(R.id.save_png_btn);
         SaveSvgTv = mView.findViewById(R.id.save_svg_btn);
@@ -41,6 +44,10 @@ public class SaveMenuManager implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.stop_playback:
+                if(mSaveBtnClickListener!=null)
+                    mSaveBtnClickListener.SaveClick(Constants.PLAYBACK);
+                break;
             case R.id.cur_paint_clear:
                 if(mSaveBtnClickListener!=null)
                     mSaveBtnClickListener.SaveClick(Constants.CLEAR);
