@@ -9,7 +9,6 @@ import com.kath.paintboard.widget.PaintView;
 import java.io.IOException;
 
 /**
- * Created by user on 2016/8/9.
  * 保存xml线程
  */
 public class SaveUtil extends Thread {
@@ -31,11 +30,11 @@ public class SaveUtil extends Thread {
         //向文件夹存储json
         for (int i = 0; i < mCanvas.getGallery().getPaintingList().size(); i++) {
             //创建json文件名
-            String jsonfilename = StoreOperation.getJsonFileName(this.mName, i + "");
+            String jsonFileName = StoreOperation.getJsonFileName(this.mName, i + "");
             try {
                 //创建json文件
-                JsonOperation.creatJson(mCanvas.getGallery().getPaintingList().get(i),
-                        jsonfilename);
+                JsonOperation.createJson(mCanvas.getGallery().getPaintingList().get(i),
+                        jsonFileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }

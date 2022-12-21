@@ -10,7 +10,6 @@ import com.kath.paintboard.util.InterSectUtil;
 import java.util.List;
 
 /**
- * Created by user on 2016/7/29.
  * 曲线笔迹类
  */
 public class Ink extends Shape {

@@ -9,11 +9,7 @@ import android.graphics.PorterDuffXfermode;
 import android.view.MotionEvent;
 
 /***
- * 名称：Eraser<br>
  * 描述：橡皮擦
- * 最近修改时间：
- * @since 2018/5/7
- * @author king
  */
 public class Eraser {
 

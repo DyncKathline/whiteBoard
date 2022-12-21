@@ -3,7 +3,6 @@ package com.kath.paintboard.bean;
 import android.os.SystemClock;
 
 /**
- * Created by user on 2016/7/29.
  * 画布上触点类
  */
 public class Point {

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by user on 2016/8/4.
  * 矩形类
  */
 public class Rectangle extends Shape {

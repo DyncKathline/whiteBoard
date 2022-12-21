@@ -1,11 +1,7 @@
 package com.kath.paintboard.config;
 
-
-/***
+/**
  * 每个点的控制，关心三个因素：笔的宽度，坐标,透明数值
- *
- * @since 2018/06/15
- * @author king
  */
 public class ControllerPoint {
     public float x;

@@ -6,7 +6,6 @@ import com.kath.paintboard.Constants;
 import com.kath.paintboard.util.InterSectUtil;
 
 /**
- * Created by user on 2016/8/3.
  * 直线类
  */
 public class Line extends Shape {

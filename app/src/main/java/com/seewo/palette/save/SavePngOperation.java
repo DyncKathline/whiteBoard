@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by user on 2016/8/9.
  * 保存为png类
  */
 public class SavePngOperation extends SaveOperation{
@@ -27,8 +26,8 @@ public class SavePngOperation extends SaveOperation{
     }
 
     @Override
-    public void SavePainting() {
-        File file = new File(GetAbusoluteFileName());
+    public void savePainting() {
+        File file = new File(getAbsoluteFileName());
         if (file.exists()) {
             file.delete();
         }
@@ -47,12 +46,12 @@ public class SavePngOperation extends SaveOperation{
     }
 
     @Override
-    public String GetAbusoluteFileName() {
+    public String getAbsoluteFileName() {
         String filepath = null;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             //获得完整的保存路径
-            String fileAbusoluteName = this.filepath + "/" +filename+ ".png";
-            File file = new File(fileAbusoluteName);
+            String fileAbsoluteName = this.filepath + "/" +filename+ ".png";
+            File file = new File(fileAbsoluteName);
             if (!file.exists()) {
                 file.mkdirs();
             }
@@ -63,7 +62,7 @@ public class SavePngOperation extends SaveOperation{
 
 
     @Override
-    public void GetContent(PaintView paintView) {
+    public void getContent(PaintView paintView) {
         this.bitmap=Bitmap.createBitmap(paintView.getBitmap());
     }
 

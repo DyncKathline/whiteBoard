@@ -15,21 +15,17 @@ import com.kath.paintboard.bean.Point;
 import com.kath.paintboard.bean.Rectangle;
 import com.kath.paintboard.bean.Shape;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
 /**
- * Created by user on 2016/7/29.
- * XML相关操作
+ * Json相关操作
  */
 public class JsonOperation {
 
@@ -38,7 +34,7 @@ public class JsonOperation {
      *
      * @param shapeList
      */
-    public static int creatJson(List<Shape> shapeList, String filename) throws IOException {
+    public static int createJson(List<Shape> shapeList, String filename) throws IOException {
 
         int returnValue = 0; //创建结果返回，0失败，1成功
 
@@ -83,7 +79,7 @@ public class JsonOperation {
             while (reader.hasNext()) {
                 String field = reader.nextName();
                 if (field.equals("Kind")) {
-                    switch (Integer.valueOf(reader.nextString())) {
+                    switch (Integer.parseInt(reader.nextString())) {
                         case Constants.INK:
                             shape = new Ink();
                             break;
@@ -106,7 +102,7 @@ public class JsonOperation {
                 } else if (field.equals("Color")) {
                     shape.setColor(reader.nextString());
                 } else if (field.equals("Width")) {
-                    shape.setWidth(Float.valueOf(reader.nextString()));
+                    shape.setWidth(Float.parseFloat(reader.nextString()));
                 } else if (field.equals("Pointlist")) {
                     shape.setPointList(changeStrToListData(reader.nextString()));
                 }
@@ -152,7 +148,7 @@ public class JsonOperation {
 
             if(split.length > 2) {
                 String str3 = split[2];
-                newPoint.setTime(Long.valueOf(str3));
+                newPoint.setTime(Long.parseLong(str3));
             }
 
             lists.add(newPoint);
@@ -167,7 +163,7 @@ public class JsonOperation {
      */
     private static String changeListDateToStr(List<Point> pointList) {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int j = 0; j < pointList.size(); j++) {
             sb.append(pointList.get(j).getX() + "," + pointList.get(j).getY() + "," + pointList.get(j).getTime() + ";");
         }

@@ -1,6 +1,12 @@
 package com.kath.paintboard;
 
 public class Constants {
+
+    /**
+     * 笔锋控制值,越小笔锋越粗,越不明显
+     */
+    public static final float DIS_VEL_CAL_FACTOR = 0.008f;
+
     public static final String[] colors = new String[]{
             "#242424",
             "#FF0000",

@@ -7,7 +7,6 @@ import com.kath.paintboard.Constants;
 import com.kath.paintboard.util.InterSectUtil;
 
 /**
- * Created by user on 2016/8/4.
  * 箭头类
  */
 public class Arrow extends Shape {

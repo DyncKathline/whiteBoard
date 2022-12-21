@@ -10,9 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Created by user on 2016/10/27.
+ * 颜色选择UI
  */
-
 public class ColorView extends View {
 
     private int mWidth;

@@ -10,7 +10,6 @@ import com.seewo.palette.activity.PaintActivity;
 import java.security.PublicKey;
 
 /**
- * Created by user on 2016/7/28.
  * 工具栏组件管理类
  */
 public class FootUiManager implements View.OnClickListener {

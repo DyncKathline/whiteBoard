@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import java.util.List;
 
 /**
- * Created by user on 2016/7/28.
  * 通用适配器类
  */
 public abstract class CommonAdapter<T> extends BaseAdapter

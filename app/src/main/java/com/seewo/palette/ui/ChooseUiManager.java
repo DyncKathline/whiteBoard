@@ -16,7 +16,6 @@ import com.seewo.palette.util.Constants;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 /**
- * Created by user on 2016/7/28.
  * 选择框组件管理
  */
 public class ChooseUiManager {

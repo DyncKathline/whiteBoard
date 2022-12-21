@@ -13,7 +13,6 @@ import com.kath.paintboard.Constants;
 import com.seewo.palette.R;
 
 /**
- * Created by user on 2016/8/3.
  * 图形选择UI
  */
 public class ShapeSelectView extends LinearLayout implements View.OnClickListener {

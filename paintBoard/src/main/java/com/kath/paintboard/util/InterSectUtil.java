@@ -2,9 +2,6 @@ package com.kath.paintboard.util;
 
 import com.kath.paintboard.bean.Point;
 
-/**
- * Created by user on 2016/8/10.
- */
 public class InterSectUtil {
 
     private  Point p1;

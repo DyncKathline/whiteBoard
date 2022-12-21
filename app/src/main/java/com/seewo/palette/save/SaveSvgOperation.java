@@ -23,7 +23,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /**
- * Created by user on 2016/8/9.
  * 另存为svg格式
  */
 public class SaveSvgOperation extends SaveOperation {
@@ -43,15 +42,15 @@ public class SaveSvgOperation extends SaveOperation {
     }
 
     @Override
-    public void GetContent(PaintView paintView) {
+    public void getContent(PaintView paintView) {
         this.shapeList.addAll(paintView.getSaveShapeList());
     }
 
     @Override
-    public String GetAbusoluteFileName() {
+    public String getAbsoluteFileName() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            String fileAbusoluteName = filepath + "/" + filename + ".svg";
-            return fileAbusoluteName;
+            String fileAbsoluteName = filepath + "/" + filename + ".svg";
+            return fileAbsoluteName;
         } else {
             return null;
         }
@@ -59,7 +58,7 @@ public class SaveSvgOperation extends SaveOperation {
 
 
     @Override
-    public void SavePainting() {
+    public void savePainting() {
         try {
             // 创建一个DocumentBuilderFactory对象
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -80,7 +79,7 @@ public class SaveSvgOperation extends SaveOperation {
                 switch (shape.getKind()) {
                     case Constants.INK:
                         element = document.createElement("path");
-                        element.setAttribute("d", ChangListToPathData(shape.getPointList()));
+                        element.setAttribute("d", changListToPathData(shape.getPointList()));
                         element.setAttribute("stroke-width", shape.getWidth() + "");
                         element.setAttribute("stroke", shape.getColor());
                         root.appendChild(element);
@@ -135,7 +134,7 @@ public class SaveSvgOperation extends SaveOperation {
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "-//W3C//DTD SVG 1.1//EN");
             transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
             //创建一个文件对象
-            File file = new File(GetAbusoluteFileName());
+            File file = new File(getAbsoluteFileName());
             //将内容通过输出流写入文件
             transformer.transform(new DOMSource(document), new StreamResult(file));
         } catch (Exception e) {
@@ -149,8 +148,8 @@ public class SaveSvgOperation extends SaveOperation {
      * @param pointList
      * @return
      */
-    private static String ChangListToPathData(List<Point> pointList) {
-        StringBuffer sb = new StringBuffer();
+    private static String changListToPathData(List<Point> pointList) {
+        StringBuilder sb = new StringBuilder();
         sb.append("M" + pointList.get(0).getX() + " " + pointList.get(0).getY() + " ");//first
         for (int i = 1; i < pointList.size(); i++) {
             sb.append("Q" +

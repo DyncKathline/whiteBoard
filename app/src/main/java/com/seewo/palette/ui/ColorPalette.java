@@ -25,7 +25,6 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by user on 2016/7/28.
  * 颜色盘组件
  */
 public class ColorPalette extends LinearLayout {

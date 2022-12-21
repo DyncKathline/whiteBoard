@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.kath.paintboard.R;
 
 /**
- * Created by user on 2016/8/8.
  * 添加多页view
  */
 public class PageSelectView extends LinearLayout implements View.OnClickListener {

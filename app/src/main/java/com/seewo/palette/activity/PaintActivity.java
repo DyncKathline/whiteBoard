@@ -1,13 +1,11 @@
 package com.seewo.palette.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
@@ -20,7 +18,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kath.paintboard.play.PlayHelper;
-import com.kath.paintboard.play.PlayUtil;
 import com.kath.paintboard.widget.PaintView;
 import com.seewo.palette.R;
 import com.seewo.palette.callback.ColorCallBack;
@@ -58,7 +55,7 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
     boolean IsMenuShow = false;
 
 
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -105,28 +102,6 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
                     mSwitchView.setChecked(false);
 //                    mPaintView.loadPreImage(filename);
 //                    mPaintView.redrawOnBitmap();
-
-//                    PlayUtil playUtil = new PlayUtil(PaintActivity.this, mPaintView);
-//                    playUtil.addListener(new AnimatorListenerAdapter() {
-//                        @Override
-//                        public void onAnimationCancel(Animator animation) {
-//                            super.onAnimationCancel(animation);
-//                            mRecordTv.setVisibility(View.GONE);
-//                        }
-//
-//                        @Override
-//                        public void onAnimationEnd(Animator animation) {
-//                            super.onAnimationEnd(animation);
-//                            mRecordTv.setVisibility(View.GONE);
-//                        }
-//
-//                        @Override
-//                        public void onAnimationStart(Animator animation) {
-//                            super.onAnimationStart(animation);
-//                            mRecordTv.setVisibility(View.VISIBLE);
-//                        }
-//                    });
-//                    playUtil.start(filename);
 
                     PlayHelper playHelper = new PlayHelper(mPaintView);
                     playHelper.setPlayListener(new PlayHelper.PlayListener() {
@@ -184,11 +159,11 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.id_undo_btn:
                 //撤销操作
-                mPaintView.Undo();
+                mPaintView.undo();
                 break;
             case R.id.id_redo_btn:
                 //重做操作
-                mPaintView.Redo();
+                mPaintView.redo();
                 break;
             case R.id.id_save_btn:
                 //另存为相关操作
@@ -432,7 +407,7 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
         //获取需要保存的内容
-        so.GetContent(mPaintView);
+        so.getContent(mPaintView);
         final EditText et = new EditText(PaintActivity.this);
         new AlertDialog.Builder(this)
                 .setMessage("输入保存文件名")
@@ -480,7 +455,7 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
      */
     @Override
     public boolean ChooseOnClicked() {
-        mPaintView.ChangeCutState();
+        mPaintView.changeCutState();
         return mPaintView.getMoveShapeState();
     }
 
@@ -492,8 +467,8 @@ public class PaintActivity extends AppCompatActivity implements View.OnClickList
             if (so != null) {
                 so.setFilepath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/palette");
                 so.setFilename(saveFileName);
-                so.GetAbusoluteFileName();
-                so.SavePainting();
+                so.getAbsoluteFileName();
+                so.savePainting();
             }
         }
     }

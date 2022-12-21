@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by user on 2016/7/28.
  * 通用viewholder
  */
 public class ViewHolder {

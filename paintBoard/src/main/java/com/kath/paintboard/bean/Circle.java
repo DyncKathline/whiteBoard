@@ -7,7 +7,6 @@ import android.graphics.RectF;
 import com.kath.paintboard.Constants;
 
 /**
- * Created by user on 2016/8/4.
  * 圆形类
  */
 public class Circle extends Shape {

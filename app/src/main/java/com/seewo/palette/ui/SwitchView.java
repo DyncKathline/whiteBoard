@@ -18,6 +18,9 @@ import androidx.annotation.Nullable;
 
 import com.seewo.palette.R;
 
+/**
+ * 自定义switch控件
+ */
 public class SwitchView extends View implements View.OnClickListener {
     private int bgColor;
     private String leftColor;

@@ -6,7 +6,6 @@ import com.kath.paintboard.Constants;
 import com.kath.paintboard.util.InterSectUtil;
 
 /**
- * Created by user on 2016/8/4.
  * 椭圆形类
  */
 public class Oval extends Shape {

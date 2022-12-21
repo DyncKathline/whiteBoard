@@ -1,10 +1,7 @@
 package com.kath.paintboard.config;
 
-/***
+/**
  * 触摸点信息
- *
- * @since 2018/06/15
- * @author king
  */
 public class MotionElement {
 
@@ -24,5 +21,10 @@ public class MotionElement {
         y = my;
     }
 
-
+    public MotionElement(float x, float y, float pressure, int toolType) {
+        this.x = x;
+        this.y = y;
+        this.pressure = pressure;
+        this.toolType = toolType;
+    }
 }

@@ -20,10 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.PaintActivity"></activity>
-        <activity
-            android:name=".activity.PlayActivity"
-            android:exported="false">
-        </activity>
     </application>
 
 </manifest>

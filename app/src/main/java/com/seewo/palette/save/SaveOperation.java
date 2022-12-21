@@ -3,7 +3,6 @@ package com.seewo.palette.save;
 import com.kath.paintboard.widget.PaintView;
 
 /**
- * Created by user on 2016/8/9.
  * 抽象另存类
  */
 public abstract class SaveOperation {
@@ -26,7 +25,7 @@ public abstract class SaveOperation {
         this.filename = filename;
     }
 
-    public abstract  String GetAbusoluteFileName();
-    public abstract void SavePainting();
-    public abstract void GetContent(PaintView paintView);
+    public abstract  String getAbsoluteFileName();
+    public abstract void savePainting();
+    public abstract void getContent(PaintView paintView);
 }

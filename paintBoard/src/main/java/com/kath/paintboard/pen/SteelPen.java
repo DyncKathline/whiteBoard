@@ -8,9 +8,6 @@ import com.kath.paintboard.config.ControllerPoint;
 
 /**
  * 钢笔
- *
- * @since 2018/06/15
- * @author king
  */
 public class SteelPen extends BasePen {
 

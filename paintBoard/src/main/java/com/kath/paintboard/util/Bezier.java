@@ -5,9 +5,6 @@ import com.kath.paintboard.config.ControllerPoint;
 
 /**
  * 贝塞尔操作工具类，对点的位置和宽度控制的bezier曲线，主要是两个点，都包含了宽度和点的坐标
- *
- * @since 2018/06/15
- * @author king
  */
 public class Bezier {
     /**

@@ -1,7 +1,7 @@
 package com.seewo.palette.callback;
 
 /**
- * Created by user on 2016/7/28.
+ * 字体颜色设置回调接口
  */
 public interface ColorCallBack {
     void setChangeColor(String color);

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 /**
- * Created by user on 2016/7/28.
  * 常量类
  */
 public class Constants {

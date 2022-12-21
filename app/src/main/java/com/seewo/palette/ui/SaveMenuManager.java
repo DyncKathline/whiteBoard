@@ -8,7 +8,6 @@ import com.seewo.palette.R;
 import com.seewo.palette.util.Constants;
 
 /**
- * Created by user on 2016/8/9.
  * 选择菜单Ui管理
  */
 public class SaveMenuManager implements View.OnClickListener {

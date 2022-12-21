@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by user on 2016/7/29.
  * 抽象笔迹类
  */
 public abstract class Shape {
@@ -66,7 +65,9 @@ public abstract class Shape {
     }
 
     public void setPointList(List<Point> pointList) {
-        this.pointList = pointList;
+        if (pointList != null) {
+            this.pointList = pointList;
+        }
     }
 
     public void setPaint(Paint paint) {

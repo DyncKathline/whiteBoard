@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -37,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by user on 2016/7/26.
  * 绘制的画布
  */
 public class PaintView extends View {
@@ -46,8 +46,8 @@ public class PaintView extends View {
     private String currentColor = Constants.colors[0]; //默认字体颜色
     private int currentKind = Constants.INK; //默认绘图类型
 
-    private int CurrentPageNum = 1;//默认当前页数
-    private int CurrentPageIndex = 1;//默认当前页序号
+    private int currentPageNum = 1;//默认当前页数
+    private int currentPageIndex = 1;//默认当前页序号
 
     private Paint mPaint;//画笔
     private Bitmap mBitmap;//画布的bitmap
@@ -57,24 +57,24 @@ public class PaintView extends View {
     int canvasHeight;//画布的高
     float mx, my; //当前画笔位置
 
-    List<Shape> SaveShapeList; //已保存笔迹List
-    List<Shape> DeleteShapeList; //删除笔迹List
+    List<Shape> saveShapeList; //已保存笔迹List
+    List<Shape> deleteShapeList; //删除笔迹List
 
     Gallery mGallery;//画册类
 
     private BasePen mStokeBrushPen;
 
-    private boolean IsFileExist = false;//是否有编辑过标志
-    private int PreShapeListSize = 0; //最初list的长度
+    private boolean isFileExist = false;//是否有编辑过标志
+    private final int preShapeListSize = 0; //最初list的长度
 
-    private boolean EraserState = false;//是否处于橡皮擦状态
-    private boolean MoveShapeState = false;//是否处于笔迹操作状态
+    private boolean eraserState = false;//是否处于橡皮擦状态
+    private boolean moveShapeState = false;//是否处于笔迹操作状态
 
-    private boolean Selected = false;//已选中状态
+    private boolean selected = false;//已选中状态
 
     private final int REDRAW = 0;
 
-    Handler handler = new Handler() {
+    Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -116,8 +116,8 @@ public class PaintView extends View {
     public PaintView(Context context, AttributeSet attrs, int defStyleAttr) {
 
         super(context, attrs, defStyleAttr);
-        SaveShapeList = new ArrayList<>();
-        DeleteShapeList = new ArrayList<>();
+        saveShapeList = new ArrayList<>();
+        deleteShapeList = new ArrayList<>();
         mGallery = new Gallery();
 
         mGallery = new Gallery();
@@ -155,7 +155,7 @@ public class PaintView extends View {
         if (!isFingerEnable && toolType != MotionEvent.TOOL_TYPE_STYLUS) {
             return false;
         }
-        if (!EraserState) {
+        if (!eraserState) {
             if (isBrushEnable && currentShape instanceof Ink) {
                 mStokeBrushPen.onTouchEvent(event, mCanvas);
             }
@@ -178,7 +178,7 @@ public class PaintView extends View {
     }
 
     public boolean onTouchEventV(MotionEvent event) {
-        if (!EraserState) {
+        if (!eraserState) {
             if (isBrushEnable && currentShape instanceof Ink) {
                 mStokeBrushPen.onTouchEvent(event, mCanvas);
             }
@@ -212,7 +212,7 @@ public class PaintView extends View {
      */
     private void touchStart(MotionEvent event, float x, float y) {
         //进入橡皮擦模式
-        if (EraserState) {
+        if (eraserState) {
             //准备画虚线需要的相关属性
             PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
             mPaint.setPathEffect(effects);
@@ -224,8 +224,8 @@ public class PaintView extends View {
             EraserPath.moveTo(x, y);
         }
         //进入选择线条模式
-        else if (MoveShapeState) {
-            if (Selected) {
+        else if (moveShapeState) {
+            if (selected) {
                 //判断点击的地方是否是在NeedRect内部如果
                 if (!IsNotInside(x, y)) {//不在范围内，相关参数清零从头开始
                     NeedMoveRect = null;
@@ -234,8 +234,8 @@ public class PaintView extends View {
                     System.out.println("NeedMoveRect:" + NeedMoveRect);
                     System.out.println("MoveList:" + MoveList);
                     System.out.println("NeedMoveRect:" + NeedMoveRect);
-                    System.out.println("Selected:" + Selected);
-                    System.out.println("MoveShapeState:" + MoveShapeState);
+                    System.out.println("Selected:" + selected);
+                    System.out.println("MoveShapeState:" + moveShapeState);
                 } else {
                     //在范围内采取相关措施
                     isMoving = true;
@@ -306,24 +306,24 @@ public class PaintView extends View {
      */
     private void touchMove(float x, float y) {
 
-        if (EraserState) {
+        if (eraserState) {
             EraserPath.quadTo(mx, my, x, y);
             //遍历笔迹
-            for (int i = 0; i < SaveShapeList.size(); i++) {
+            for (int i = 0; i < saveShapeList.size(); i++) {
                 //判断进入对应的矩形
-                if (SaveShapeList.get(i).isEnterShapeEdge(x, y)) {
+                if (saveShapeList.get(i).isEnterShapeEdge(x, y)) {
                     System.out.println("----------->enter");
                     //判断是否发生相交
-                    if (SaveShapeList.get(i).isInterSect(mx, my, x, y)) {
+                    if (saveShapeList.get(i).isInterSect(mx, my, x, y)) {
                         System.out.println("------------>isInterSect");
                         //记录当前shape的position
                         SweepList.add(i);
                     }
                 }
             }
-        } else if (MoveShapeState) {
+        } else if (moveShapeState) {
 
-            if (Selected) {
+            if (selected) {
 //                if(isMoving==true) {
 //                    for (int k = 0; k < NeedMoveList.size(); k++) {
 //                        //取出
@@ -344,12 +344,12 @@ public class PaintView extends View {
                     MovePath.quadTo(mx, my, x, y);
                 }
                 //遍历笔迹
-                for (int i = 0; i < SaveShapeList.size(); i++) {
+                for (int i = 0; i < saveShapeList.size(); i++) {
                     //判断进入对应的矩形
-                    if (SaveShapeList.get(i).isEnterShapeEdge(x, y)) {
+                    if (saveShapeList.get(i).isEnterShapeEdge(x, y)) {
                         System.out.println("----------->enter");
                         //判断是否发生相交
-                        if (SaveShapeList.get(i).isInterSect(mx, my, x, y)) {
+                        if (saveShapeList.get(i).isInterSect(mx, my, x, y)) {
                             System.out.println("------------>isInterSect");
                             //记录当前shape的position
                             MoveList.add(i);
@@ -384,24 +384,24 @@ public class PaintView extends View {
      */
     private void touchUp(float x, float y) {
 
-        if (EraserState) {
+        if (eraserState) {
             EraserPath.lineTo(x, y);
             EraserPath = null;
             if (SweepList.size() != 0) {
                 //删除选中的shape
                 for (int i = 0; i < SweepList.size(); i++) {
                     //根据下标取出对象
-                    NeedHandleList.add(SaveShapeList.get(SweepList.get(i)));
+                    NeedHandleList.add(saveShapeList.get(SweepList.get(i)));
                 }
                 //遍历对象依次删除
                 for (int j = 0; j < NeedHandleList.size(); j++) {
                     Shape deleteObject = NeedHandleList.get(j);
-                    Iterator<Shape> it = SaveShapeList.iterator();
+                    Iterator<Shape> it = saveShapeList.iterator();
                     while (it.hasNext()) {
                         Shape i = it.next();
                         if (i == deleteObject) {
                             //删除的笔迹放入DeleteList
-                            DeleteShapeList.add(i);
+                            deleteShapeList.add(i);
                             it.remove();
                         }
                     }
@@ -410,16 +410,16 @@ public class PaintView extends View {
             //相关参数清空
             SweepList = null;
             NeedHandleList = null;
-            System.out.println(SaveShapeList.size());
-            System.out.println(DeleteShapeList.size());
+            System.out.println(saveShapeList.size());
+            System.out.println(deleteShapeList.size());
             //通知系统重绘
             Message msg = new Message();
             msg.what = REDRAW;
             handler.sendMessageDelayed(msg, 100);
-        } else if (MoveShapeState) {
-            if (Selected) {
+        } else if (moveShapeState) {
+            if (selected) {
                 if (NeedMoveList == null)
-                    Selected = false;
+                    selected = false;
                 redrawOnBitmap();
             } else {
                 MovePath.lineTo(x, y);
@@ -427,7 +427,7 @@ public class PaintView extends View {
                     //删除选中的shape
                     for (int i = 0; i < MoveList.size(); i++) {
                         //根据下标取出对象
-                        NeedMoveList.add(SaveShapeList.get(MoveList.get(i)));
+                        NeedMoveList.add(saveShapeList.get(MoveList.get(i)));
                     }
                     //遍历找到笔迹最大的Rect区域
                     NeedMoveRect = findBiggestRect(NeedMoveList);
@@ -436,7 +436,7 @@ public class PaintView extends View {
                 //相关参数清空
                 MovePath = null;
                 //设置为已选中状态
-                Selected = true;
+                selected = true;
                 //现在NeedMoveList中有保存对应笔迹.NeedMoveRect不为空.MoveList也保存有笔迹对应下标
 
             }
@@ -459,7 +459,7 @@ public class PaintView extends View {
             //保存终结点
             currentShape.addPoint(x, y);
             //将笔迹添加到栈中
-            SaveShapeList.add(currentShape);
+            saveShapeList.add(currentShape);
             //对象置空
             currentShape = null;
         }
@@ -471,8 +471,8 @@ public class PaintView extends View {
         System.out.println("NeedMoveRect:" + NeedMoveRect);
         System.out.println("MoveList:" + MoveList);
         System.out.println("NeedMoveRect:" + NeedMoveRect);
-        System.out.println("Selected:" + Selected);
-        System.out.println("MoveShapeState:" + MoveShapeState);
+        System.out.println("Selected:" + selected);
+        System.out.println("MoveShapeState:" + moveShapeState);
     }
 
     /**
@@ -515,12 +515,12 @@ public class PaintView extends View {
                 currentShape.draw(canvas);
             }
         }
-        if (EraserState) {
+        if (eraserState) {
             if (EraserPath != null) {
                 canvas.drawPath(EraserPath, mPaint);
             }
         }
-        if (MoveShapeState) {
+        if (moveShapeState) {
             if (MovePath != null) {
                 canvas.drawPath(MovePath, mPaint);
             }
@@ -531,10 +531,10 @@ public class PaintView extends View {
     /**
      * 撤销操作
      */
-    public void Undo() {
-        if (SaveShapeList != null && SaveShapeList.size() >= 1) {
-            DeleteShapeList.add(SaveShapeList.get(SaveShapeList.size() - 1));
-            SaveShapeList.remove(SaveShapeList.size() - 1);
+    public void undo() {
+        if (saveShapeList != null && saveShapeList.size() >= 1) {
+            deleteShapeList.add(saveShapeList.get(saveShapeList.size() - 1));
+            saveShapeList.remove(saveShapeList.size() - 1);
             redrawOnBitmap();//重新绘制图案
         }
 
@@ -543,10 +543,10 @@ public class PaintView extends View {
     /**
      * 重做操作
      */
-    public void Redo() {
-        if (DeleteShapeList != null && DeleteShapeList.size() >= 1) {
-            SaveShapeList.add(DeleteShapeList.get(DeleteShapeList.size() - 1));
-            DeleteShapeList.remove(DeleteShapeList.size() - 1);
+    public void redo() {
+        if (deleteShapeList != null && deleteShapeList.size() >= 1) {
+            saveShapeList.add(deleteShapeList.get(deleteShapeList.size() - 1));
+            deleteShapeList.remove(deleteShapeList.size() - 1);
             redrawOnBitmap();//重新绘制图案
         }
 
@@ -558,7 +558,7 @@ public class PaintView extends View {
      * @param filename
      */
     public void loadPreImage(String filename) {
-        IsFileExist = true;
+        isFileExist = true;
         //遍历文件夹下每个xml文件
         File scanFilePath = new File(filename);
         if (scanFilePath.isDirectory()) {
@@ -581,12 +581,12 @@ public class PaintView extends View {
             String name = filename.substring(filename.lastIndexOf("/") + 1);
             mGallery.setName(name);
             //修改对应页数相关
-            CurrentPageNum = mGallery.getNum();
+            currentPageNum = mGallery.getNum();
             //载入当前第一页内容
-            SaveShapeList.clear();
-            SaveShapeList.addAll(mGallery.getPaintingList().get(0));
+            saveShapeList.clear();
+            saveShapeList.addAll(mGallery.getPaintingList().get(0));
             System.out.println("载入成功");
-            System.out.println("笔迹个数" + SaveShapeList.size());
+            System.out.println("笔迹个数" + saveShapeList.size());
 //            redrawOnBitmap();
         }
     }
@@ -603,19 +603,19 @@ public class PaintView extends View {
      */
 
     public int getCurrentPageNum() {
-        return CurrentPageNum;
+        return currentPageNum;
     }
 
     public void setCurrentPageNum(int currentPageNum) {
-        CurrentPageNum = currentPageNum;
+        this.currentPageNum = currentPageNum;
     }
 
     public int getCurrentPageIndex() {
-        return CurrentPageIndex;
+        return currentPageIndex;
     }
 
     public void setCurrentPageIndex(int currentPageIndex) {
-        CurrentPageIndex = currentPageIndex;
+        this.currentPageIndex = currentPageIndex;
     }
 
     /**
@@ -689,7 +689,7 @@ public class PaintView extends View {
      * @return
      */
     public List<Shape> getSaveShapeList() {
-        return SaveShapeList;
+        return saveShapeList;
     }
 
     /**
@@ -698,7 +698,7 @@ public class PaintView extends View {
      * @param saveShapeList
      */
     public void setSaveShapeList(List<Shape> saveShapeList) {
-        SaveShapeList = saveShapeList;
+        this.saveShapeList = saveShapeList;
     }
 
     /**
@@ -760,8 +760,8 @@ public class PaintView extends View {
         // 重新设置画布，相当于清空画布
         initCanvas();
         //依次遍历，绘制对应图案
-        for (int i = 0; i < SaveShapeList.size(); i++) {
-            Shape shape = SaveShapeList.get(i);
+        for (int i = 0; i < saveShapeList.size(); i++) {
+            Shape shape = saveShapeList.get(i);
 //            shape.draw(mCanvas);
             if (isBrushEnable && shape instanceof Ink) {
                 for (int j = 0; j < shape.getPointList().size(); j++) {
@@ -778,12 +778,12 @@ public class PaintView extends View {
                 shape.draw(mCanvas);
             }
             //字体大小和颜色根据最后一个shape决定
-            if (i == SaveShapeList.size() - 1) {
+            if (i == saveShapeList.size() - 1) {
                 setBrushSize(shape.getPaint().getStrokeWidth());
                 setBrushColor(String.format("#%06X", 0xFFFFFF & shape.getPaint().getColor()));
             }
         }
-        if (MoveShapeState) {
+        if (moveShapeState) {
             if (NeedMoveList != null) {
                 PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
                 Paint newPaint = new Paint();
@@ -802,7 +802,7 @@ public class PaintView extends View {
      * @return
      */
     public boolean isEmpty() {
-        if (SaveShapeList.size() == 0)
+        if (saveShapeList.size() == 0)
             return true;
         else
             return false;
@@ -815,7 +815,7 @@ public class PaintView extends View {
      */
     public boolean isFileExist() {
 
-        return IsFileExist;
+        return isFileExist;
     }
 
     /**
@@ -824,7 +824,7 @@ public class PaintView extends View {
      * @return
      */
     public boolean isEdited() {
-        if (PreShapeListSize == SaveShapeList.size()) {
+        if (preShapeListSize == saveShapeList.size()) {
             return false;
         } else {
             return true;
@@ -836,13 +836,13 @@ public class PaintView extends View {
      * 绘制新的图形
      */
     public void drawNewImage() {
-        if (mGallery.getNum() != CurrentPageNum) {
+        if (mGallery.getNum() != currentPageNum) {
             //保存当前笔迹集合及Bitmap
-            mGallery.addPainting(SaveShapeList, mBitmap);
+            mGallery.addPainting(saveShapeList, mBitmap);
 
         }
-        SaveShapeList.clear();
-        DeleteShapeList.clear();
+        saveShapeList.clear();
+        deleteShapeList.clear();
         //清空画布及相关数据
         initCanvas();
 
@@ -855,19 +855,19 @@ public class PaintView extends View {
     public void turnToPrePage() {
 
         //刚好处于最后一页要往前翻
-        if (mGallery.getNum() == CurrentPageNum - 1) {
+        if (mGallery.getNum() == currentPageNum - 1) {
             //保存当前图形
-            mGallery.addPainting(SaveShapeList, mBitmap);
+            mGallery.addPainting(saveShapeList, mBitmap);
         } else {
             //覆盖当前图形
-            mGallery.coverPainting(SaveShapeList, mBitmap, CurrentPageIndex);
+            mGallery.coverPainting(saveShapeList, mBitmap, currentPageIndex);
         }
         //清空画布及相关数据
         initCanvas();
-        SaveShapeList.clear();
-        DeleteShapeList.clear();
+        saveShapeList.clear();
+        deleteShapeList.clear();
         //加载上一页内容
-        SaveShapeList.addAll(mGallery.getPaintingList().get(CurrentPageIndex - 1));
+        saveShapeList.addAll(mGallery.getPaintingList().get(currentPageIndex - 1));
         redrawOnBitmap();
     }
 
@@ -877,21 +877,21 @@ public class PaintView extends View {
     public void turnToNextPage() {
 
         //覆盖当前图形
-        mGallery.coverPainting(SaveShapeList, mBitmap, CurrentPageIndex - 2);
+        mGallery.coverPainting(saveShapeList, mBitmap, currentPageIndex - 2);
         //清空画布及相关数据
         initCanvas();
-        SaveShapeList.clear();
-        DeleteShapeList.clear();
+        saveShapeList.clear();
+        deleteShapeList.clear();
         //加载下一页内容
-        SaveShapeList.addAll(mGallery.getPaintingList().get(CurrentPageIndex - 1));
+        saveShapeList.addAll(mGallery.getPaintingList().get(currentPageIndex - 1));
         redrawOnBitmap();
     }
 
     public void clear() {
         //清空画布及相关数据
         initCanvas();
-        SaveShapeList.clear();
-        DeleteShapeList.clear();
+        saveShapeList.clear();
+        deleteShapeList.clear();
         invalidate();
     }
 
@@ -899,10 +899,10 @@ public class PaintView extends View {
      * 判断是否需要保存最后一张并处理
      */
     public void saveTheLast() {
-        if (mGallery.getNum() == CurrentPageNum - 1) {
-            mGallery.addPainting(SaveShapeList, mBitmap);
+        if (mGallery.getNum() == currentPageNum - 1) {
+            mGallery.addPainting(saveShapeList, mBitmap);
         } else {
-            mGallery.coverPainting(SaveShapeList, mBitmap, CurrentPageIndex - 1);
+            mGallery.coverPainting(saveShapeList, mBitmap, currentPageIndex - 1);
         }
     }
 
@@ -910,30 +910,30 @@ public class PaintView extends View {
      * 修改橡皮擦状态
      */
     public void changeEraserState() {
-        if (MoveShapeState == true) {
-            MoveShapeState = false;
+        if (moveShapeState == true) {
+            moveShapeState = false;
         }
-        EraserState = !EraserState;
-        System.out.println(EraserState);
+        eraserState = !eraserState;
+        System.out.println(eraserState);
     }
 
     public boolean getEraserState() {
-        return EraserState;
+        return eraserState;
     }
 
     /**
      * 修改笔迹相关操作状态
      */
-    public void ChangeCutState() {
-        if (EraserState == true) {
-            EraserState = false;
+    public void changeCutState() {
+        if (eraserState == true) {
+            eraserState = false;
         }
-        MoveShapeState = !MoveShapeState;
-        System.out.println(MoveShapeState);
+        moveShapeState = !moveShapeState;
+        System.out.println(moveShapeState);
     }
 
     public boolean getMoveShapeState() {
-        return MoveShapeState;
+        return moveShapeState;
     }
 
     public boolean isFingerEnable() {
@@ -953,6 +953,6 @@ public class PaintView extends View {
     }
 
     public void setFileExist(boolean fileExist) {
-        IsFileExist = fileExist;
+        isFileExist = fileExist;
     }
 }
