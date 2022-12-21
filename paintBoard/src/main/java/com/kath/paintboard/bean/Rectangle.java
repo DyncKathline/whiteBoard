@@ -1,0 +1,115 @@
+package com.kath.paintboard.bean;
+
+import android.graphics.Canvas;
+
+import com.kath.paintboard.Constants;
+import com.kath.paintboard.util.InterSectUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by user on 2016/8/4.
+ * 矩形类
+ */
+public class Rectangle extends Shape {
+
+    Point startPoint;
+    Point endPoint;
+
+    /**
+     * **************************
+     * construct methond
+     * **************************
+     */
+
+    public Rectangle() {
+
+    }
+
+
+    /**
+     * **************************
+     * getter and setter methond
+     * <p>
+     * **************************
+     */
+
+    public Point getStartPoint() {
+        return startPoint;
+    }
+
+    public Point getEndPoint() {
+        return endPoint;
+    }
+
+    public void setStartPoint(Point startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    public void setEndPoint(Point endPoint) {
+        this.endPoint = endPoint;
+    }
+
+
+    @Override
+    public void draw(Canvas mCanvas) {
+        if (startPoint != null && endPoint != null) {
+            mCanvas.drawRect(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY(), paint);
+        }
+    }
+
+    @Override
+    public void touchDown(float x, float y) {
+        //设置初始点和终止点
+        setStartPoint(new Point(x, y));
+        setEndPoint(new Point(x, y));
+    }
+
+    @Override
+    public void touchMove(float mx, float my, float x, float y) {
+        //修改终止点
+        setEndPoint(new Point(x, y));
+        //保存点
+        addPoint(x, y);
+    }
+
+    @Override
+    public void touchUp(float x, float y) {
+        //设置终止点
+        setEndPoint(new Point(x, y));
+    }
+
+    @Override
+    public int getKind() {
+        return Constants.RECT;
+    }
+
+    @Override
+    public void setOwnProperty() {
+        //获取关键点
+        setStartPoint(pointList.get(0));
+//        setEndPoint(pointList.get(1));
+        setEndPoint(pointList.get(pointList.size() - 1));
+    }
+
+
+    @Override
+    public boolean isInterSect(float lastx, float lasty, float x, float y) {
+        //矩形逻辑和曲线也是一样的，一共四个点
+        List<Point> JudgePointList = new ArrayList<>();
+        JudgePointList.add(pointList.get(0));
+        JudgePointList.add(new Point(pointList.get(1).getX(), pointList.get(0).getY()));
+        JudgePointList.add(new Point(pointList.get(1).getX(), pointList.get(1).getY()));
+        JudgePointList.add(new Point(pointList.get(0).getX(), pointList.get(1).getY()));
+        JudgePointList.add(pointList.get(0));
+        for (int i = 1; i < JudgePointList.size(); i++) {
+            if (new InterSectUtil(new Point(lastx, lasty), new Point(x, y), JudgePointList.get(i - 1), JudgePointList.get(i)).segmentIntersect()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+}
