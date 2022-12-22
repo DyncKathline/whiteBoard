@@ -93,7 +93,9 @@ public class PlayHelper implements LifecycleObserver {
                 List<Point> points = shape.getPointList();
                 if (index > 0) {//这里是为了两段笔画之间可能存在停留间隙，不然会画完上一个就直接画下一个了
                     Point point = points.get(0);
-                    while (!mStopping && frameNeedWait(point.getTime(), getTick())) {
+                    List<Point> prePoints = mShapes.get(index - 1).getPointList();
+                    Point lastPoint = prePoints.get(prePoints.size() - 1);
+                    while (!mStopping && frameNeedWait(point.getTime() - lastPoint.getTime(), getTick())) {
                         synchronized (obj) {
                             try {
                                 obj.wait(10);
@@ -146,6 +148,7 @@ public class PlayHelper implements LifecycleObserver {
         }
 
         private boolean frameNeedWait(long tick, long curTick) {
+            System.out.println("frameNeedWait--tick:" + tick + ", curTick:" + curTick + ", tick - curTick:" + (tick - curTick));
             return tick - 100 > curTick;
         }
 
