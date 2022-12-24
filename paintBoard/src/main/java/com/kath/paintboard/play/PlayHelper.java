@@ -95,7 +95,9 @@ public class PlayHelper implements LifecycleObserver {
                     Point point = points.get(0);
                     List<Point> prePoints = mShapes.get(index - 1).getPointList();
                     Point lastPoint = prePoints.get(prePoints.size() - 1);
-                    while (!mStopping && frameNeedWait(point.getTime() - lastPoint.getTime(), getTick())) {
+                    long differTwo = point.getTime() - lastPoint.getTime();
+                    long tick = getTick();
+                    while (!mStopping && frameNeedWait( tick + differTwo, getTick())) {
                         synchronized (obj) {
                             try {
                                 obj.wait(10);
