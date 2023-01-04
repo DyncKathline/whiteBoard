@@ -2,7 +2,7 @@ package com.seewo.palette.save;
 
 import android.os.Environment;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.bean.Point;
 import com.kath.paintboard.bean.Shape;
 import com.kath.paintboard.widget.PaintView;
@@ -77,14 +77,14 @@ public class SaveSvgOperation extends SaveOperation {
                 Element element = null;
                 Shape shape = shapeList.get(i);
                 switch (shape.getKind()) {
-                    case Constants.INK:
+                    case PaintConstants.INK:
                         element = document.createElement("path");
                         element.setAttribute("d", changListToPathData(shape.getPointList()));
                         element.setAttribute("stroke-width", shape.getWidth() + "");
                         element.setAttribute("stroke", shape.getColor());
                         root.appendChild(element);
                         break;
-                    case Constants.LINE:
+                    case PaintConstants.LINE:
                         element = document.createElement("line");
                         element.setAttribute("x1", shape.getPointList().get(0).getX() + "");
                         element.setAttribute("y1", shape.getPointList().get(0).getY() + "");
@@ -94,7 +94,7 @@ public class SaveSvgOperation extends SaveOperation {
                         element.setAttribute("stroke", shape.getColor());
                         root.appendChild(element);
                         break;
-                    case Constants.RECT:
+                    case PaintConstants.RECT:
                         element = document.createElement("rect");
                         element.setAttribute("x", shape.getPointList().get(0).getX() + "");
                         element.setAttribute("y", shape.getPointList().get(0).getY() + "");
@@ -104,7 +104,7 @@ public class SaveSvgOperation extends SaveOperation {
                         element.setAttribute("stroke", shape.getColor());
                         root.appendChild(element);
                         break;
-                    case Constants.CIRCLE:
+                    case PaintConstants.CIRCLE:
                         element = document.createElement("circle");
                         element.setAttribute("cx", (shape.getPointList().get(1).getX() + shape.getPointList().get(0).getX()) / 2 + "");
                         element.setAttribute("cy", (shape.getPointList().get(1).getY() + shape.getPointList().get(0).getY()) / 2 + "");

@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.os.SystemClock;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.util.InterSectUtil;
 
 import java.util.List;
@@ -116,7 +116,7 @@ public class Ink extends Shape {
 
     @Override
     public int getKind() {
-        return Constants.INK;
+        return PaintConstants.INK;
     }
 
     @Override

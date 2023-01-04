@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.config.ControllerPoint;
 import com.kath.paintboard.config.MotionElement;
 import com.kath.paintboard.util.Bezier;
@@ -125,7 +125,7 @@ public abstract class BasePen {
         //同理，当滑动的越快的话，deltaX+deltaY的值越大，这个越大的话，curDis也越大
         double curDis = Math.hypot(deltaX, deltaY);
         //我们求出的这个值越小，画的点或者是绘制椭圆形越多，这个值越大的话，绘制的越少，笔就越细，宽度越小
-        double curVel = curDis * Constants.DIS_VEL_CAL_FACTOR;
+        double curVel = curDis * PaintConstants.DIS_VEL_CAL_FACTOR;
         double curWidth;
         //点的集合少，我们得必须改变宽度,每次点击的down的时候，这个事件
         if (mHWPointList.size() < 2) {

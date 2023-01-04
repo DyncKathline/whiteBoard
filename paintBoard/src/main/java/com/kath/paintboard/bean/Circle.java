@@ -3,7 +3,7 @@ package com.kath.paintboard.bean;
 import android.graphics.Canvas;
 import android.os.SystemClock;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 
 /**
  * 圆形类
@@ -105,7 +105,7 @@ public class Circle extends Shape {
 
     @Override
     public int getKind() {
-        return Constants.CIRCLE;
+        return PaintConstants.CIRCLE;
     }
 
     @Override

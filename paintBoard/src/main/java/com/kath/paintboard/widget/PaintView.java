@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.bean.Arrow;
 import com.kath.paintboard.bean.Circle;
 import com.kath.paintboard.bean.Gallery;
@@ -44,8 +44,8 @@ import java.util.List;
 public class PaintView extends View {
 
     private float currentWidth = 15; //默认字体大小
-    private String currentColor = Constants.colors[0]; //默认字体颜色
-    private int currentKind = Constants.INK; //默认绘图类型
+    private String currentColor = PaintConstants.colors[0]; //默认字体颜色
+    private int currentKind = PaintConstants.INK; //默认绘图类型
 
     private int currentPageNum = 1;//默认当前页数
     private int currentPageIndex = 1;//默认当前页序号
@@ -219,7 +219,7 @@ public class PaintView extends View {
             //准备画虚线需要的相关属性
             PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
             mPaint.setPathEffect(effects);
-            mPaint.setColor(Color.parseColor(Constants.colors[1]));
+            mPaint.setColor(Color.parseColor(PaintConstants.colors[1]));
             sweepList = new ArrayList<>();
             needHandleList = new ArrayList<>();
             //创建橡皮擦的path
@@ -250,7 +250,7 @@ public class PaintView extends View {
                 //准备画虚线需要的相关属性
                 PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
                 mPaint.setPathEffect(effects);
-                mPaint.setColor(Color.parseColor(Constants.colors[1]));
+                mPaint.setColor(Color.parseColor(PaintConstants.colors[1]));
 
                 moveList = new ArrayList<>();
                 needMoveList = new ArrayList<>();
@@ -261,22 +261,22 @@ public class PaintView extends View {
         } else {
             //判断当前类型，根据类型选择构造函数
             switch (currentKind) {
-                case Constants.INK:
+                case PaintConstants.INK:
                     currentShape = new Ink();
                     break;
-                case Constants.LINE:
+                case PaintConstants.LINE:
                     currentShape = new Line();
                     break;
-                case Constants.RECT:
+                case PaintConstants.RECT:
                     currentShape = new Rectangle();
                     break;
-                case Constants.CIRCLE:
+                case PaintConstants.CIRCLE:
                     currentShape = new Circle();
                     break;
-                case Constants.ARROW:
+                case PaintConstants.ARROW:
                     currentShape = new Arrow();
                     break;
-                case Constants.OVAL:
+                case PaintConstants.OVAL:
                     currentShape = new Oval();
                     break;
             }
@@ -694,7 +694,7 @@ public class PaintView extends View {
     public void setCurrentKind(int currentKind) {
         this.currentKind = currentKind;
         switch (currentKind) {
-            case Constants.INK:
+            case PaintConstants.INK:
                 mStokeBrushPen = new SteelPen();
                 break;
         }
@@ -821,7 +821,7 @@ public class PaintView extends View {
                 PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
                 Paint newPaint = new Paint();
                 newPaint.setPathEffect(effects);
-                newPaint.setColor(Color.parseColor(Constants.colors[1]));
+                newPaint.setColor(Color.parseColor(PaintConstants.colors[1]));
                 newPaint.setStyle(Paint.Style.STROKE);
                 mCanvas.drawRect(needMoveRect.left, needMoveRect.top, needMoveRect.right, needMoveRect.bottom, newPaint);
             }

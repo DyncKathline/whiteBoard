@@ -6,10 +6,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.seewo.palette.R;
 
 /**
@@ -77,22 +76,22 @@ public class ShapeSelectView extends LinearLayout implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.id_select_ink:
-                setKind(Constants.INK);
+                setKind(PaintConstants.INK);
                 break;
             case R.id.id_select_line:
-                setKind(Constants.LINE);
+                setKind(PaintConstants.LINE);
                 break;
             case R.id.id_select_rect:
-                setKind(Constants.RECT);
+                setKind(PaintConstants.RECT);
                 break;
             case R.id.id_select_circle:
-                setKind(Constants.CIRCLE);
+                setKind(PaintConstants.CIRCLE);
                 break;
             case R.id.id_select_arrow:
-                setKind(Constants.ARROW);
+                setKind(PaintConstants.ARROW);
                 break;
             case R.id.id_select_oval:
-                setKind(Constants.OVAL);
+                setKind(PaintConstants.OVAL);
                 break;
         }
         if (mKindBtnClickedListener != null) {
@@ -108,22 +107,22 @@ public class ShapeSelectView extends LinearLayout implements View.OnClickListene
         mSelectArrowBtn.setTextColor(Color.BLACK);
         mSelectOvalBtn.setTextColor(Color.BLACK);
         switch (kind) {
-            case Constants.INK:
+            case PaintConstants.INK:
                 mSelectInkBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
-            case Constants.LINE:
+            case PaintConstants.LINE:
                 mSelectLineBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
-            case Constants.RECT:
+            case PaintConstants.RECT:
                 mSelectRectBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
-            case Constants.CIRCLE:
+            case PaintConstants.CIRCLE:
                 mSelectCircleBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
-            case Constants.ARROW:
+            case PaintConstants.ARROW:
                 mSelectArrowBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
-            case Constants.OVAL:
+            case PaintConstants.OVAL:
                 mSelectOvalBtn.setTextColor(mContext.getResources().getColor(R.color.blue));
                 break;
         }

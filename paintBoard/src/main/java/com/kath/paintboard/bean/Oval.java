@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.os.SystemClock;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 
 /**
  * 椭圆形类
@@ -98,7 +98,7 @@ public class Oval extends Shape {
 
     @Override
     public int getKind() {
-        return Constants.OVAL;
+        return PaintConstants.OVAL;
     }
 
     @Override

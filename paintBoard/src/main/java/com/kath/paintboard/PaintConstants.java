@@ -1,6 +1,6 @@
 package com.kath.paintboard;
 
-public class Constants {
+public class PaintConstants {
 
     /**
      * 笔锋控制值,越小笔锋越粗,越不明显
@@ -27,4 +27,6 @@ public class Constants {
     public static final int CIRCLE = 4;//圆
     public static final int OVAL = 5;//椭圆
     public static final int ARROW = 6;//箭头
+
+    public static boolean savePrivate = false;
 }

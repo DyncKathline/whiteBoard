@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.bean.Arrow;
 import com.kath.paintboard.bean.Circle;
 import com.kath.paintboard.bean.Ink;
@@ -80,22 +80,22 @@ public class JsonOperation {
                 String field = reader.nextName();
                 if (field.equals("Kind")) {
                     switch (Integer.parseInt(reader.nextString())) {
-                        case Constants.INK:
+                        case PaintConstants.INK:
                             shape = new Ink();
                             break;
-                        case Constants.LINE:
+                        case PaintConstants.LINE:
                             shape = new Line();
                             break;
-                        case Constants.RECT:
+                        case PaintConstants.RECT:
                             shape = new Rectangle();
                             break;
-                        case Constants.CIRCLE:
+                        case PaintConstants.CIRCLE:
                             shape = new Circle();
                             break;
-                        case Constants.ARROW:
+                        case PaintConstants.ARROW:
                             shape = new Arrow();
                             break;
-                        case Constants.OVAL:
+                        case PaintConstants.OVAL:
                             shape = new Oval();
                             break;
                     }

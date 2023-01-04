@@ -5,26 +5,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.kath.paintboard.PaintConstants;
 import com.qmai.crashlib.CrashHandler;
 import com.qmai.crashlib.CrashListener;
 import com.seewo.palette.activity.PaintActivity;
 import com.seewo.palette.adapter.CommonAdapter;
 import com.seewo.palette.adapter.ViewHolder;
 import com.seewo.palette.util.PermissionUtil;
-import com.seewo.palette.util.StoreOperation;
+import com.kath.paintboard.util.StoreOperation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initDatas() {
         //从SD卡中读出图片数据
-        File scanFilePath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/palette");
+        File scanFilePath = new File(StoreOperation.getFileParentPath(this, PaintConstants.savePrivate));
         if (scanFilePath.isDirectory()) {
             for (File file : scanFilePath.listFiles()) {
                 String filename = file.getAbsolutePath();

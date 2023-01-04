@@ -11,8 +11,6 @@ public class Constants {
     public static final int maxBrushSize = 20; //画笔最大
     public static final int minBrushSize = 5; //画笔最小
 
-    final HashMap<Integer, String> colormap = new HashMap<>();
-
     public static final int MSG_EXIT = 0X111;//退出信号
 
     public static final int PLAYBACK = 3;
@@ -21,4 +19,5 @@ public class Constants {
     public static final int SVG = 6;
 
     public static final int MSG_REDRAW = 0X112;//重绘信号
+
 }

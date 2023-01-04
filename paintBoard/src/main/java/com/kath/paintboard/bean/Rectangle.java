@@ -3,7 +3,7 @@ package com.kath.paintboard.bean;
 import android.graphics.Canvas;
 import android.os.SystemClock;
 
-import com.kath.paintboard.Constants;
+import com.kath.paintboard.PaintConstants;
 import com.kath.paintboard.util.InterSectUtil;
 
 import java.util.ArrayList;
@@ -101,7 +101,7 @@ public class Rectangle extends Shape {
 
     @Override
     public int getKind() {
-        return Constants.RECT;
+        return PaintConstants.RECT;
     }
 
     @Override
