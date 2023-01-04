@@ -80,19 +80,38 @@ public class Ink extends Shape {
 
     @Override
     public void touchDown(float x, float y) {
+        touchDown(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchDown(float x, float y, long time) {
         path.moveTo(x, y);
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchMove(float mx, float my, float x, float y) {
+        touchMove(mx, my, x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchMove(float mx, float my, float x, float y, long time) {
         path.quadTo(mx, my, (x + mx) / 2, (y + my) / 2);
         //保存点
-        addPoint(x, y);
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchUp(float x, float y) {
+        touchUp(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchUp(float x, float y, long time) {
         path.lineTo(x, y);
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override

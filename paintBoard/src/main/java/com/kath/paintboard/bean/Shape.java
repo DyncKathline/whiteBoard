@@ -2,9 +2,7 @@ package com.kath.paintboard.bean;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.SystemClock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +84,17 @@ public abstract class Shape {
     }
 
     /**
+     * 添加点函数
+     *
+     * @param x
+     * @param y
+     * @param time
+     */
+    public void addPoint(float x, float y, long time) {
+        pointList.add(new Point(x, y, time));
+    }
+
+    /**
      * 绘制函数
      *
      * @param mCanvas
@@ -101,6 +110,15 @@ public abstract class Shape {
     public abstract void touchDown(float x, float y);
 
     /**
+     * 按下操作对应的相关处理
+     *
+     * @param x
+     * @param y
+     * @param time
+     */
+    public abstract void touchDown(float x, float y, long time);
+
+    /**
      * 移动过程中相关操作
      *
      * @param x
@@ -109,12 +127,30 @@ public abstract class Shape {
     public abstract void touchMove(float mx, float my, float x, float y);
 
     /**
+     * 移动过程中相关操作
+     *
+     * @param x
+     * @param y
+     * @param time
+     */
+    public abstract void touchMove(float mx, float my, float x, float y, long time);
+
+    /**
      * 抬起操作对应的相关处理
      *
      * @param x
      * @param y
      */
     public abstract void touchUp(float x, float y);
+
+    /**
+     * 抬起操作对应的相关处理
+     *
+     * @param x
+     * @param y
+     * @param time
+     */
+    public abstract void touchUp(float x, float y, long time);
 
     /**
      * 返回自己对应种类

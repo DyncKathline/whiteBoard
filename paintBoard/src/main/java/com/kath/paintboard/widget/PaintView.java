@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,6 +74,8 @@ public class PaintView extends View {
     private boolean selected = false;//已选中状态
 
     private final int REDRAW = 0;
+
+    private IPaintCallback iPaintCallback;
 
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -201,8 +204,8 @@ public class PaintView extends View {
     }
 
     Shape currentShape;
-    Path EraserPath;
-    Path MovePath;
+    Path eraserPath;
+    Path movePath;
 
     /**
      * 按下操作对应处理
@@ -217,23 +220,23 @@ public class PaintView extends View {
             PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
             mPaint.setPathEffect(effects);
             mPaint.setColor(Color.parseColor(Constants.colors[1]));
-            SweepList = new ArrayList<>();
-            NeedHandleList = new ArrayList<>();
+            sweepList = new ArrayList<>();
+            needHandleList = new ArrayList<>();
             //创建橡皮擦的path
-            EraserPath = new Path();
-            EraserPath.moveTo(x, y);
+            eraserPath = new Path();
+            eraserPath.moveTo(x, y);
         }
         //进入选择线条模式
         else if (moveShapeState) {
             if (selected) {
                 //判断点击的地方是否是在NeedRect内部如果
                 if (!IsNotInside(x, y)) {//不在范围内，相关参数清零从头开始
-                    NeedMoveRect = null;
-                    MoveList = null;
-                    NeedMoveList = null;
-                    System.out.println("NeedMoveRect:" + NeedMoveRect);
-                    System.out.println("MoveList:" + MoveList);
-                    System.out.println("NeedMoveRect:" + NeedMoveRect);
+                    needMoveRect = null;
+                    moveList = null;
+                    needMoveList = null;
+                    System.out.println("NeedMoveRect:" + needMoveRect);
+                    System.out.println("MoveList:" + moveList);
+                    System.out.println("NeedMoveRect:" + needMoveRect);
                     System.out.println("Selected:" + selected);
                     System.out.println("MoveShapeState:" + moveShapeState);
                 } else {
@@ -249,11 +252,11 @@ public class PaintView extends View {
                 mPaint.setPathEffect(effects);
                 mPaint.setColor(Color.parseColor(Constants.colors[1]));
 
-                MoveList = new ArrayList<>();
-                NeedMoveList = new ArrayList<>();
+                moveList = new ArrayList<>();
+                needMoveList = new ArrayList<>();
                 //创建选中笔迹的path
-                MovePath = new Path();
-                MovePath.moveTo(x, y);
+                movePath = new Path();
+                movePath.moveTo(x, y);
             }
         } else {
             //判断当前类型，根据类型选择构造函数
@@ -278,9 +281,13 @@ public class PaintView extends View {
                     break;
             }
             //执行对应操作
-            currentShape.touchDown(x, y);
+            long time = SystemClock.elapsedRealtime();
+            currentShape.touchDown(x, y, time);
             if (isBrushEnable && currentShape instanceof Ink) {
                 mStokeBrushPen.onDown(mStokeBrushPen.createMotionElement(event), mCanvas);
+            }
+            if(iPaintCallback != null) {
+                iPaintCallback.touchDown(event, x, y, time);
             }
             //设置画笔
             currentShape.setPaint(mPaint);
@@ -294,12 +301,12 @@ public class PaintView extends View {
         my = y;
     }
 
-    List<Integer> SweepList;
-    List<Shape> NeedHandleList;
+    List<Integer> sweepList;
+    List<Shape> needHandleList;
 
-    List<Integer> MoveList;
-    List<Shape> NeedMoveList;
-    RectF NeedMoveRect;
+    List<Integer> moveList;
+    List<Shape> needMoveList;
+    RectF needMoveRect;
 
     /**
      * 移动操作对应处理
@@ -307,7 +314,7 @@ public class PaintView extends View {
     private void touchMove(float x, float y) {
 
         if (eraserState) {
-            EraserPath.quadTo(mx, my, x, y);
+            eraserPath.quadTo(mx, my, x, y);
             //遍历笔迹
             for (int i = 0; i < saveShapeList.size(); i++) {
                 //判断进入对应的矩形
@@ -317,7 +324,7 @@ public class PaintView extends View {
                     if (saveShapeList.get(i).isInterSect(mx, my, x, y)) {
                         System.out.println("------------>isInterSect");
                         //记录当前shape的position
-                        SweepList.add(i);
+                        sweepList.add(i);
                     }
                 }
             }
@@ -336,12 +343,12 @@ public class PaintView extends View {
 //                            shape.getPointList().set(j, new Point(movex, movey));
 //                        }
 //                        //替换SaveList中的对应shape
-//                        SaveShapeList.set(MoveList.get(k), shape);
+//                        saveShapeList.set(MoveList.get(k), shape);
 //                    }
 //                }
             } else {
-                if (MovePath != null) {
-                    MovePath.quadTo(mx, my, x, y);
+                if (movePath != null) {
+                    movePath.quadTo(mx, my, x, y);
                 }
                 //遍历笔迹
                 for (int i = 0; i < saveShapeList.size(); i++) {
@@ -352,14 +359,18 @@ public class PaintView extends View {
                         if (saveShapeList.get(i).isInterSect(mx, my, x, y)) {
                             System.out.println("------------>isInterSect");
                             //记录当前shape的position
-                            MoveList.add(i);
+                            moveList.add(i);
                         }
                     }
                 }
             }
         } else {
             //执行相关操作
-            currentShape.touchMove(mx, my, x, y);
+            long time = SystemClock.elapsedRealtime();
+            currentShape.touchMove(mx, my, x, y, time);
+            if(iPaintCallback != null) {
+                iPaintCallback.touchMove(mx, my, x, y, time);
+            }
         }
         //记录当前坐标点
         mx = x;
@@ -372,8 +383,8 @@ public class PaintView extends View {
      * @return
      */
     private boolean IsNotInside(float x, float y) {
-        if (NeedMoveRect != null) {
-            if (x >= NeedMoveRect.left && x <= NeedMoveRect.right && y >= NeedMoveRect.bottom && y <= NeedMoveRect.top)
+        if (needMoveRect != null) {
+            if (x >= needMoveRect.left && x <= needMoveRect.right && y >= needMoveRect.bottom && y <= needMoveRect.top)
                 return true;
         }
         return false;
@@ -385,17 +396,17 @@ public class PaintView extends View {
     private void touchUp(float x, float y) {
 
         if (eraserState) {
-            EraserPath.lineTo(x, y);
-            EraserPath = null;
-            if (SweepList.size() != 0) {
+            eraserPath.lineTo(x, y);
+            eraserPath = null;
+            if (sweepList.size() != 0) {
                 //删除选中的shape
-                for (int i = 0; i < SweepList.size(); i++) {
+                for (int i = 0; i < sweepList.size(); i++) {
                     //根据下标取出对象
-                    NeedHandleList.add(saveShapeList.get(SweepList.get(i)));
+                    needHandleList.add(saveShapeList.get(sweepList.get(i)));
                 }
                 //遍历对象依次删除
-                for (int j = 0; j < NeedHandleList.size(); j++) {
-                    Shape deleteObject = NeedHandleList.get(j);
+                for (int j = 0; j < needHandleList.size(); j++) {
+                    Shape deleteObject = needHandleList.get(j);
                     Iterator<Shape> it = saveShapeList.iterator();
                     while (it.hasNext()) {
                         Shape i = it.next();
@@ -408,8 +419,8 @@ public class PaintView extends View {
                 }
             }
             //相关参数清空
-            SweepList = null;
-            NeedHandleList = null;
+            sweepList = null;
+            needHandleList = null;
             System.out.println(saveShapeList.size());
             System.out.println(deleteShapeList.size());
             //通知系统重绘
@@ -418,23 +429,23 @@ public class PaintView extends View {
             handler.sendMessageDelayed(msg, 100);
         } else if (moveShapeState) {
             if (selected) {
-                if (NeedMoveList == null)
+                if (needMoveList == null)
                     selected = false;
                 redrawOnBitmap();
             } else {
-                MovePath.lineTo(x, y);
-                if (MoveList.size() != 0) {
+                movePath.lineTo(x, y);
+                if (moveList.size() != 0) {
                     //删除选中的shape
-                    for (int i = 0; i < MoveList.size(); i++) {
+                    for (int i = 0; i < moveList.size(); i++) {
                         //根据下标取出对象
-                        NeedMoveList.add(saveShapeList.get(MoveList.get(i)));
+                        needMoveList.add(saveShapeList.get(moveList.get(i)));
                     }
                     //遍历找到笔迹最大的Rect区域
-                    NeedMoveRect = findBiggestRect(NeedMoveList);
+                    needMoveRect = findBiggestRect(needMoveList);
 
                 }
                 //相关参数清空
-                MovePath = null;
+                movePath = null;
                 //设置为已选中状态
                 selected = true;
                 //现在NeedMoveList中有保存对应笔迹.NeedMoveRect不为空.MoveList也保存有笔迹对应下标
@@ -446,9 +457,12 @@ public class PaintView extends View {
             handler.sendMessageDelayed(msg, 100);
 
         } else {
-
             //执行相关操作
-            currentShape.touchUp(x, y);
+            long time = SystemClock.elapsedRealtime();
+            currentShape.touchUp(x, y, time);
+            if(iPaintCallback != null) {
+                iPaintCallback.touchUp(x, y, time);
+            }
             //绘制到Bitmap上去
 //            currentShape.draw(mCanvas);
             if (isBrushEnable && currentShape instanceof Ink) {
@@ -468,9 +482,9 @@ public class PaintView extends View {
 //        System.out.println("Selected:"+Selected);
 //        System.out.println("EraserState:"+EraserState);
 
-        System.out.println("NeedMoveRect:" + NeedMoveRect);
-        System.out.println("MoveList:" + MoveList);
-        System.out.println("NeedMoveRect:" + NeedMoveRect);
+        System.out.println("NeedMoveRect:" + needMoveRect);
+        System.out.println("MoveList:" + moveList);
+        System.out.println("NeedMoveRect:" + needMoveRect);
         System.out.println("Selected:" + selected);
         System.out.println("MoveShapeState:" + moveShapeState);
     }
@@ -516,13 +530,13 @@ public class PaintView extends View {
             }
         }
         if (eraserState) {
-            if (EraserPath != null) {
-                canvas.drawPath(EraserPath, mPaint);
+            if (eraserPath != null) {
+                canvas.drawPath(eraserPath, mPaint);
             }
         }
         if (moveShapeState) {
-            if (MovePath != null) {
-                canvas.drawPath(MovePath, mPaint);
+            if (movePath != null) {
+                canvas.drawPath(movePath, mPaint);
             }
         }
     }
@@ -536,6 +550,9 @@ public class PaintView extends View {
             deleteShapeList.add(saveShapeList.get(saveShapeList.size() - 1));
             saveShapeList.remove(saveShapeList.size() - 1);
             redrawOnBitmap();//重新绘制图案
+            if(iPaintCallback != null) {
+                iPaintCallback.undo();
+            }
         }
 
     }
@@ -548,6 +565,9 @@ public class PaintView extends View {
             saveShapeList.add(deleteShapeList.get(deleteShapeList.size() - 1));
             deleteShapeList.remove(deleteShapeList.size() - 1);
             redrawOnBitmap();//重新绘制图案
+            if(iPaintCallback != null) {
+                iPaintCallback.redo();
+            }
         }
 
     }
@@ -618,6 +638,10 @@ public class PaintView extends View {
         this.currentPageIndex = currentPageIndex;
     }
 
+    public void setPaintCallback(IPaintCallback callback) {
+        iPaintCallback = callback;
+    }
+
     /**
      * 设置笔迹宽度
      */
@@ -625,6 +649,9 @@ public class PaintView extends View {
         currentWidth = brushSize;
         mPaint.setStrokeWidth(brushSize);
         mStokeBrushPen.setPaint(mPaint);
+        if(iPaintCallback != null) {
+            iPaintCallback.changeBrushSize(brushSize);
+        }
     }
 
     /**
@@ -645,6 +672,9 @@ public class PaintView extends View {
         currentColor = color;
         mPaint.setColor(Color.parseColor(currentColor));
         mStokeBrushPen.setPaint(mPaint);
+        if(iPaintCallback != null) {
+            iPaintCallback.changeBrushColor(color);
+        }
     }
 
     /**
@@ -671,6 +701,9 @@ public class PaintView extends View {
         //设置
         if (mStokeBrushPen.isNullPaint()) {
             mStokeBrushPen.setPaint(mPaint);
+        }
+        if(iPaintCallback != null) {
+            iPaintCallback.changeKind(currentKind);
         }
     }
 
@@ -784,13 +817,13 @@ public class PaintView extends View {
             }
         }
         if (moveShapeState) {
-            if (NeedMoveList != null) {
+            if (needMoveList != null) {
                 PathEffect effects = new DashPathEffect(new float[]{8, 8, 8, 8}, 1);//设置虚线的间隔和点的长度
                 Paint newPaint = new Paint();
                 newPaint.setPathEffect(effects);
                 newPaint.setColor(Color.parseColor(Constants.colors[1]));
                 newPaint.setStyle(Paint.Style.STROKE);
-                mCanvas.drawRect(NeedMoveRect.left, NeedMoveRect.top, NeedMoveRect.right, NeedMoveRect.bottom, newPaint);
+                mCanvas.drawRect(needMoveRect.left, needMoveRect.top, needMoveRect.right, needMoveRect.bottom, newPaint);
             }
         }
         invalidate();

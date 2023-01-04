@@ -1,8 +1,7 @@
 package com.kath.paintboard.bean;
 
 import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.RectF;
+import android.os.SystemClock;
 
 import com.kath.paintboard.Constants;
 
@@ -52,34 +51,56 @@ public class Circle extends Shape {
     @Override
     public void draw(Canvas mCanvas) {
         if (startPoint != null && endPoint != null) {
-            float radius = Math.abs(endPoint.getY() - startPoint.getY()) >= Math.abs(endPoint.getX() - startPoint.getX()) ? Math.abs(endPoint.getX() - startPoint.getX()) / 2 : Math.abs(endPoint.getY() - startPoint.getY()) / 2;
-            mCanvas.drawCircle(
-                    (endPoint.getX() - startPoint.getX()) / 2 + startPoint.getX(),
-                    (endPoint.getY() - startPoint.getY()) / 2 + startPoint.getY(),
-                    radius,
-                    paint);
+//            float radius = Math.abs(endPoint.getY() - startPoint.getY()) >= Math.abs(endPoint.getX() - startPoint.getX()) ? Math.abs(endPoint.getX() - startPoint.getX()) / 2 : Math.abs(endPoint.getY() - startPoint.getY()) / 2;
+//            mCanvas.drawCircle(
+//                    (endPoint.getX() - startPoint.getX()) / 2 + startPoint.getX(),
+//                    (endPoint.getY() - startPoint.getY()) / 2 + startPoint.getY(),
+//                    radius,
+//                    paint);
+            float radius = (float) ((Math.sqrt((endPoint.getX() - startPoint.getX()) * (endPoint.getX() - startPoint.getX())
+                    + (endPoint.getY() - startPoint.getY()) * (endPoint.getY() - startPoint.getY()))) / 2);
+            mCanvas.drawCircle((startPoint.getX() + endPoint.getX()) / 2, (startPoint.getY() + endPoint.getY()) / 2, radius, paint);
         }
     }
 
     @Override
     public void touchDown(float x, float y) {
+        touchDown(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchDown(float x, float y, long time) {
         //设置初始点和终止点
-        setStartPoint(new Point(x, y));
-        setEndPoint(new Point(x, y));
+        setStartPoint(new Point(x, y, time));
+        setEndPoint(new Point(x, y, time));
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchMove(float mx, float my, float x, float y) {
+        touchMove(mx, my, x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchMove(float mx, float my, float x, float y, long time) {
         //修改终止点
-        setEndPoint(new Point(x, y));
+        setEndPoint(new Point(x, y, time));
         //保存点
-        addPoint(x, y);
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchUp(float x, float y) {
+        touchUp(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchUp(float x, float y, long time) {
         //设置终止点
-        setEndPoint(new Point(x, y));
+        setEndPoint(new Point(x, y, time));
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override
@@ -98,10 +119,12 @@ public class Circle extends Shape {
     @Override
     public boolean isInterSect(float lastx, float lasty, float x, float y) {
         Point center = new Point((endPoint.getX() + startPoint.getX()) / 2, (endPoint.getY() + startPoint.getY()) / 2);
-        float radius = Math.abs(
-                endPoint.getY() - startPoint.getY()) >= Math.abs(endPoint.getX() - startPoint.getX())
-                ? Math.abs(endPoint.getX() - startPoint.getX()) / 2
-                : Math.abs(endPoint.getY() - startPoint.getY()) / 2;
+        float radius = (float) ((Math.sqrt((endPoint.getX() - startPoint.getX()) * (endPoint.getX() - startPoint.getX())
+                + (endPoint.getY() - startPoint.getY()) * (endPoint.getY() - startPoint.getY()))) / 2);
+//        float radius = Math.abs(
+//                endPoint.getY() - startPoint.getY()) >= Math.abs(endPoint.getX() - startPoint.getX())
+//                ? Math.abs(endPoint.getX() - startPoint.getX()) / 2
+//                : Math.abs(endPoint.getY() - startPoint.getY()) / 2;
 //        System.out.println("circlecenter:"+center.getX()+";"+center.getY());
 //        System.out.println("radius:"+radius);
 //        double lastd=getDistance(lastx,lasty,center.getX(),center.getY());

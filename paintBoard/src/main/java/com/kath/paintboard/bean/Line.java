@@ -1,6 +1,7 @@
 package com.kath.paintboard.bean;
 
 import android.graphics.Canvas;
+import android.os.SystemClock;
 
 import com.kath.paintboard.Constants;
 import com.kath.paintboard.util.InterSectUtil;
@@ -62,23 +63,42 @@ public class Line extends Shape {
 
     @Override
     public void touchDown(float x, float y) {
+        touchDown(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchDown(float x, float y, long time) {
         //设置初始点和终结点
-        setStartPoint(new Point(x, y));
-        setEndPoint(new Point(x, y));
+        setStartPoint(new Point(x, y, time));
+        setEndPoint(new Point(x, y, time));
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchMove(float mx, float my, float x, float y) {
+        touchMove(mx, my, x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchMove(float mx, float my, float x, float y, long time) {
         //修改终结点
-        setEndPoint(new Point(x, y));
+        setEndPoint(new Point(x, y, time));
         //保存点
-        addPoint(x, y);
+        addPoint(x, y, time);
     }
 
     @Override
     public void touchUp(float x, float y) {
+        touchUp(x, y, SystemClock.elapsedRealtime());
+    }
+
+    @Override
+    public void touchUp(float x, float y, long time) {
         //设置终结点
-        setEndPoint(new Point(x, y));
+        setEndPoint(new Point(x, y, time));
+        //保存点
+        addPoint(x, y, time);
     }
 
     @Override
